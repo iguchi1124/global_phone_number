@@ -1,8 +1,7 @@
-module GlobalPhoneNumber
+class GlobalPhoneNumber
   class Metadata
     def self.parse(path)
-      Ox.default_options = { with_dtd: true }
-      new(Ox.parse(File.new(path)))
+      new(Ox.parse(File.read(path)))
     end
 
     attr_reader :data
@@ -11,8 +10,12 @@ module GlobalPhoneNumber
       @data = data
     end
 
-    def root
-      data.root
+    def territories
+      data.root.territories.nodes.select { |node|
+        node.value == 'territory'
+      }.map { |node|
+        Territory.new(node)
+      }
     end
   end
 end
